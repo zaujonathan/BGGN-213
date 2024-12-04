@@ -1,0 +1,58 @@
+---
+title: "R Functions Lab (Class 6)"
+author: "Jonathan Zau"
+format: html
+---
+
+## Question 1
+
+Write a function grade() to determine an overall grade from a vector of student homework assignment scores dropping the lowest single score. If a student misses a homework (i.e. has an NA value) this can be used as a score to be potentially dropped.
+
+```{r}
+  # Get overall grade from given scores
+grade <- function(scores) {
+  sorted_scores <- sort(scores, decreasing = TRUE, na.last = TRUE) # Sort scores in decreasing order, with all NAs last
+  dropped_scores <- head(sorted_scores, -1) # Drop the lowest score, i.e. last score in the sorted scores
+  dropped_scores[is.na(dropped_scores)] <- 0 # Convert all NAs to 0s
+  return(mean(dropped_scores)) # Return the average of all scores, i.e. overall grade
+}
+
+grade(c(100, 73, 100, 88, 79)) # Example
+```
+
+## Question 2
+
+Using your grade() function and the supplied gradebook, Who is the top scoring student overall in the gradebook?
+
+```{r}
+gradebook <- read.csv("student_homework.csv") # Get gradebook and convert into dataframe
+
+  # Get overall grade from given scores !WARNING! RESTRICTED TO 5 ASSIGNMENTS
+grade2 <- function(student) {
+  scores <- c(gradebook[student,]$hw1, gradebook[student,]$hw2, gradebook[student,]$hw3, gradebook[student,]$hw4, gradebook[student,]$hw5) # Extract given student's homework scores
+  sorted_scores <- sort(scores, decreasing = TRUE, na.last = TRUE) # Sort scores in decreasing order, with all NAs last
+  dropped_scores <- head(sorted_scores, -1) # Drop the lowest score, i.e. last score in the sorted scores
+  dropped_scores[is.na(dropped_scores)] <- 0 # Convert all NAs to 0s
+  return(mean(dropped_scores)) # Return the average of all scores, i.e. overall grade
+}
+
+grades <- sapply(1:length(gradebook$X), grade2) # Get overall grade for every student in gradebook
+
+print(grades) # See every student's overall grade
+which.max(grades) # Find which student has the highest overall grade
+```
+
+## Question 3
+
+From your analysis of the gradebook, which homework was toughest on students (i.e. obtained the lowest scores overall?
+
+```{r}
+gradebook2 <- subset(gradebook, select = -X)
+
+for(n in 1:ncol(gradebook2)){
+  mean <- mean(gradebook2[[n]])
+  print(mean)
+  print(n)
+}
+```
+

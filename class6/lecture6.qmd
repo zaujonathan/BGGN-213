@@ -1,0 +1,51 @@
+---
+title: "Lecture 6"
+author: "Jonathan Zau"
+format: html
+---
+
+## Generate random sequence of amino acids
+
+Don't forget to `install.packages(bio3d)`!
+
+```{r}
+  # Build sequence of amino acids AKA protein sequences
+generate_protein <- function(length){
+  AAs <- unique(bio3d::aa.table$aa1)[1:20] # Get list of all unique amino acids
+  protein <- sample(AAs, length, replace = TRUE) # Order amino acids randomly in a sequence of given length
+  sequence <- paste(protein, collapse = "") # Combine amino acid sequence into one string
+  return(sequence)
+}
+
+generate_protein(20)
+```
+
+## Generate multiple random sequences of amino acids
+
+```{r}
+  # Build sequences of amino acids AKA protein sequences
+generate_multiple_proteins <- function(lower, higher){
+  seqlist <- vector() # Instantiate empty vector for holding completed sequences
+  AAs <- unique(bio3d::aa.table$aa1)[1:20] # Get list of all unique amino acids
+  for(length in lower:higher){ # For every sequence length in the given range
+    protein <- sample(AAs, length, replace = TRUE) # Order amino acids randomly in a sequence of given length
+    sequence <- paste(protein, collapse = "") # Combine amino acid sequence into one string
+    seqlist <- c(seqlist, sequence) # Add just completed sequence to the seqlist
+  }
+  return(seqlist)
+}
+
+generate_multiple_proteins(6, 13)
+```
+
+Or you can do it the easy way...
+
+```{r}
+sapply(6:13, generate_protein) # Applies function "generate_protein" to 6 thru 13
+```
+
+Let's put these sequences in FASTA format.
+
+```{r}
+cat(paste("\n>ID.", 6:13, sep = "", "\n", sapply(6:13, generate_protein)))
+```
